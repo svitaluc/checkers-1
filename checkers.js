@@ -247,6 +247,10 @@ function main() {
     input: process.stdin,
     output: process.stdout
   });
+  processTurn(rl);
+}
+
+function processTurn(rl){
   // print the board
   printBoard();
   // offer instructions
@@ -262,6 +266,7 @@ function main() {
       var moves = getLegalMoves(piece, x, y);
       if(moves.length === 0) {
         console.log("\nNo legal moves for ", piece, "at", x, ",", y);
+        processTurn(rl);
       } else {
         // Print available moves
         console.log("\nAvailable moves for ", match[1] + "," + match[2]);
@@ -272,7 +277,18 @@ function main() {
           } else {
             console.log(index + ". You can " + getJumpString(move));
           }
-        })
+        });
+        //Prompt the user to pick a move
+        rl.question("Pick your move from the list: ", function(answer){
+          var command = answer.substring(0,1);
+          if(command === "c") return;
+          command = parseInt(command);
+          if(command === NaN || command >= moves.length) return;
+          applyMove(x,y,moves[command]);
+          checkForVictory();
+          nextTurn();
+          processTurn(rl);
+        });
       }
     }
   });
